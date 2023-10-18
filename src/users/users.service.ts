@@ -31,7 +31,11 @@ export class UsersService {
     }
 
     const jwtToken = await this.authService.createAcessToken(user._id)
-    return { name: user.name, jwtToken: jwtToken, email: user.email }
+    return { name: user.name, jwtToken, email: user.email }
+  }
+
+  public async findAll(): Promise<User[]> {
+    return this.usersModel.find()
   }
 
   private async findByEmail(email: string): Promise<User> {
@@ -43,11 +47,11 @@ export class UsersService {
   }
 
   private async checkPassword(password: string, user: User): Promise<boolean> {
-    const isMatched = await bcrypt.compare(password, user.password)
-    if(!isMatched){
+    const match = await bcrypt.compare(password, user.password)
+    if(!match){
       throw new NotFoundException('Password not found')
     }
-    return isMatched
+    return match
   }
 
 
